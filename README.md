@@ -32,4 +32,5 @@ fire ball (green)
 * Implement commentary with calls to an LLM such as LLama
 
 # Time Details and Changelist
-<Add information to this section about the time you've taken for this task along with a professional changelist.>
+Implemented ball trail - 2h
+Add paddle hit sound effect - 20m 

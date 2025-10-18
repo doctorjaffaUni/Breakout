@@ -1,5 +1,6 @@
 #include "Ball.h"
 #include "GameManager.h" // avoid cicular dependencies
+#include <iostream>
 
 Ball::Ball(sf::RenderWindow* window, float velocity, GameManager* gameManager)
     : _window(window), _velocity(velocity), _gameManager(gameManager),
@@ -8,6 +9,11 @@ Ball::Ball(sf::RenderWindow* window, float velocity, GameManager* gameManager)
     _sprite.setRadius(RADIUS);
     _sprite.setFillColor(sf::Color::Cyan);
     _sprite.setPosition(0, 300);
+    _sprite.setOrigin(_sprite.getRadius(), _sprite.getRadius()); // Centre the sprite origin so ball trail draws nicely, regardless of rotation 
+
+    // Load the audio file and set the sound 
+    paddle_hit_buffer.loadFromFile("Audio/paddle_hit.wav");
+    paddle_hit_sound.setBuffer(paddle_hit_buffer); 
 }
 
 Ball::~Ball()
@@ -47,6 +53,47 @@ void Ball::update(float dt)
     sf::Vector2f position = _sprite.getPosition();
     sf::Vector2u windowDimensions = _window->getSize();
 
+    // Time step controls distance between each trail point
+    const float trail_time_step = 0.04f;
+    static float trail_time = 0.f;
+
+    trail_time += dt;
+    if (trail_time >= trail_time_step)
+    {
+        // Reset trail time for the next point 
+        trail_time = 0.f;
+
+        // Create the point and add it to the trail vector
+        BallTrail point;
+        point.shape.setRadius(3.f);
+        point.shape.setOrigin(1.5f, 1.5f);
+        point.shape.setPosition(_sprite.getPosition());
+        point.shape.setFillColor(sf::Color(255, 255, 255, 200));
+        point.lifetime = 0.5f;
+        trail.push_back(point);
+
+    }
+
+    // For each element in the trail vector
+    for (auto it = trail.begin(); it != trail.end();) {
+        // Decrease the lifetime 
+        it->lifetime -= dt;
+
+        // If lifetime is now 0 (or below), erase the point 
+        if (it->lifetime <= 0.f) {
+            it = trail.erase(it);
+        }
+        else
+        {
+            // Lower the alpha value as the lifetime decreases
+            sf::Color fade = it->shape.getFillColor();
+            fade.a = 255 * it->lifetime;
+            it->shape.setFillColor(fade);
+
+            ++it;
+        }
+    }
+
     // bounce on walls
     if ((position.x >= windowDimensions.x - 2 * RADIUS && _direction.x > 0) || (position.x <= 0 && _direction.x < 0))
     {
@@ -71,6 +118,7 @@ void Ball::update(float dt)
     if (_sprite.getGlobalBounds().intersects(_gameManager->getPaddle()->getBounds()))
     {
         _direction.y *= -1; // Bounce vertically
+        paddle_hit_sound.play(); // Play the paddle hit audio
 
         float paddlePositionProportion = (_sprite.getPosition().x - _gameManager->getPaddle()->getBounds().left) / _gameManager->getPaddle()->getBounds().width;
         _direction.x = paddlePositionProportion * 2.0f - 1.0f;
@@ -94,6 +142,10 @@ void Ball::update(float dt)
 
 void Ball::render()
 {
+    // Draw each point in the trail 
+    for (const BallTrail& point : trail)
+        _window->draw(point.shape);
+
     _window->draw(_sprite);
 }
 
