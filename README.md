@@ -32,5 +32,7 @@ fire ball (green)
 * Implement commentary with calls to an LLM such as LLama
 
 # Time Details and Changelist
-Implemented ball trail - 2h
-Add paddle hit sound effect - 20m 
+Ball trail - 2h
+Paddle hit sound effect - 20m 
+Extra audio - 20m 
+Simple game loop - 30m
