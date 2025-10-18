@@ -13,6 +13,9 @@ GameManager::GameManager(sf::RenderWindow* window)
     _masterText.setPosition(50, 400);
     _masterText.setCharacterSize(48);
     _masterText.setFillColor(sf::Color::Yellow);
+
+    music_buffer.loadFromFile("Audio/bg_music.wav");
+    music.setBuffer(music_buffer);
 }
 
 void GameManager::initialize()
@@ -26,6 +29,11 @@ void GameManager::initialize()
 
     // Create bricks
     _brickManager->createBricks(5, 10, 80.0f, 30.0f, 5.0f);
+
+    // Loop background music and begin playing 
+    music.setLoop(true);
+    music.play();
+    music.setVolume(25);
 }
 
 void GameManager::update(float dt)
@@ -37,12 +45,32 @@ void GameManager::update(float dt)
 
     if (_lives <= 0)
     {
-        _masterText.setString("Game over.");
+        _masterText.setString("Game over. Press R to retry.");
+        music.stop();
+
+        // Reinitalize everything 
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+        {
+            _masterText.setString("");
+            _levelComplete = false;
+            _lives = 3;
+            initialize();
+        }
         return;
     }
     if (_levelComplete)
     {
-        _masterText.setString("Level completed.");
+        _masterText.setString("Level completed. Press R to play again.");
+        music.stop();
+
+        // Reinitalize everything 
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
+        {
+            _masterText.setString("");
+            _levelComplete = false;
+            _lives = 3;
+            initialize();
+        }
         return;
     }
     // pause and pause handling
@@ -54,12 +82,18 @@ void GameManager::update(float dt)
             _pause = true;
             _masterText.setString("paused.");
             _pauseHold = PAUSE_TIME_BUFFER;
+
+            // Pause the music  
+            music.pause();
         }
         if (_pause && _pauseHold <= 0.f)
         {
             _pause = false;
             _masterText.setString("");
             _pauseHold = PAUSE_TIME_BUFFER;
+
+            // Unpause music
+            music.play();
         }
     }
     if (_pause)

@@ -14,6 +14,9 @@ Ball::Ball(sf::RenderWindow* window, float velocity, GameManager* gameManager)
     // Load the audio file and set the sound 
     paddle_hit_buffer.loadFromFile("Audio/paddle_hit.wav");
     paddle_hit_sound.setBuffer(paddle_hit_buffer); 
+
+    brick_break_buffer.loadFromFile("Audio/brick_break.wav");
+    brick_break_sound.setBuffer(brick_break_buffer);
 }
 
 Ball::~Ball()
@@ -133,10 +136,12 @@ void Ball::update(float dt)
     if (collisionResponse == 1)
     {
         _direction.x *= -1; // Bounce horizontally
+        brick_break_sound.play();
     }
     else if (collisionResponse == 2)
     {
         _direction.y *= -1; // Bounce vertically
+        brick_break_sound.play();
     }
 }
 

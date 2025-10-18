@@ -34,6 +34,9 @@ private:
     sf::SoundBuffer paddle_hit_buffer;
     sf::Sound paddle_hit_sound;
 
+    sf::SoundBuffer brick_break_buffer;
+    sf::Sound brick_break_sound;
+
     GameManager* _gameManager;  // Reference to the GameManager
 
 

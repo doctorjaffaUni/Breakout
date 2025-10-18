@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "CONSTANTS.h"
 #include "Paddle.h"
 #include "Ball.h"
@@ -49,4 +50,7 @@ private:
 
     static constexpr float PAUSE_TIME_BUFFER = 0.5f;
     static constexpr float POWERUP_FREQUENCY = 7.5f;    // time between minimum powerup spawn
+
+    sf::SoundBuffer music_buffer;
+    sf::Sound music;
 };
