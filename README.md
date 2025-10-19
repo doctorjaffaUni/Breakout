@@ -36,3 +36,4 @@ Ball trail - 2h
 Paddle hit sound effect - 20m 
 Extra audio - 20m 
 Simple game loop - 30m
+Mouse tracking control - 15m 
