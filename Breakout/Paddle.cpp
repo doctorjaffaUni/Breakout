@@ -7,6 +7,7 @@ Paddle::Paddle(sf::RenderWindow* window)
     _sprite.setFillColor(sf::Color::Cyan);
     _sprite.setPosition((window->getSize().x - _width) / 2.0f, window->getSize().y - 50.0f);
     _sprite.setSize(sf::Vector2f(_width, PADDLE_HEIGHT));
+    _sprite.setOrigin(sf::Vector2f(_width / 2, PADDLE_HEIGHT / 2)); // Set origin to centre for mouse control 
 }
 
 Paddle::~Paddle()
@@ -43,6 +44,10 @@ void Paddle::update(float dt)
     {
         setWidth(1.0f, 0.0f); // Reset to default width after duration
     }
+
+    // Set sprite position to the mouse position (Relative to the window) on the X axis 
+    _sprite.setPosition(sf::Vector2f(sf::Mouse::getPosition(*_window).x, _sprite.getPosition().y));
+
 }
 
 void Paddle::render()

@@ -34,6 +34,8 @@ void GameManager::initialize()
     music.setLoop(true);
     music.play();
     music.setVolume(25);
+
+    _window->setMouseCursorVisible(false);
 }
 
 void GameManager::update(float dt)
